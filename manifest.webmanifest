@@ -1,0 +1,10 @@
+{
+  "name": "CarstenFit – dein Training",
+  "short_name": "CarstenFit",
+  "description": "Trainingsplan, Protokoll, Musik und Fortschritt an einem Ort.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101310",
+  "theme_color": "#101310",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
