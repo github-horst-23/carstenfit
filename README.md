@@ -20,18 +20,16 @@ Es gibt keine Build- oder Paketinstallation. Der Service Worker legt die App-Dat
 
 Die Daten werden in `localStorage` gespeichert. Ein Backup auf ein anderes Gerät muss manuell exportiert und importiert werden. Spotify-Inhalte laufen im offiziellen Spotify-Embed-Player; dessen Wiedergabe braucht eine Internetverbindung.
 
-## OneDrive verbinden
+## Google Drive verbinden
 
-Die Synchronisierung legt `CarstenFit-sync.json` im App-Ordner deines OneDrive ab. Sie verwendet [Microsoft Graph](https://learn.microsoft.com/en-us/graph/onedrive-sharepoint-appfolder) und fordert ausschließlich die delegierte Berechtigung `Files.ReadWrite.AppFolder` an. Microsofts [MSAL-Bibliothek](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/about-msal-browser) führt die Anmeldung per Authorization Code Flow mit PKCE aus und verwaltet die Tokens im Browser.
+CarstenFit speichert `CarstenFit-sync.json` im privaten `appDataFolder` von Google Drive. Dieser Ordner wird von Google für App-Daten verwaltet und ist nicht Teil deiner normalen Drive-Dateiliste. Die App fordert nur den OAuth-Bereich `drive.appdata` an. [Google-Dokumentation zum App-Datenordner](https://developers.google.com/workspace/drive/api/guides/appdata)
 
-### Einmalige Microsoft-Einrichtung
+### Einmalige Google-Einrichtung
 
-1. Im [Microsoft Entra Admin Center](https://entra.microsoft.com/) eine App-Registrierung namens **CarstenFit** erstellen. Als unterstützte Kontotypen **Konten in einem beliebigen Organisationsverzeichnis und persönliche Microsoft-Konten** wählen.
-2. Unter **Authentifizierung** eine Plattform **Single-page application (SPA)** hinzufügen. Als Redirect-URI die URL dieser App eintragen, zum Beispiel `http://localhost:8000/index.html` oder die HTTPS-Adresse, unter der du sie hostest.
-3. Unter **API-Berechtigungen** für Microsoft Graph die delegierte Berechtigung `Files.ReadWrite.AppFolder` hinzufügen.
-4. Die **Anwendungs-ID (Client)** der App-Registrierung kopieren.
-5. CarstenFit über `localhost` oder HTTPS öffnen, oben rechts die OneDrive-Verbindung öffnen, die Anwendungs-ID eintragen und **Mit Microsoft anmelden** wählen.
+1. Öffne die [Google Cloud Console](https://console.cloud.google.com/), erstelle ein Projekt und aktiviere darin die **Google Drive API**.
+2. Richte die OAuth-Zustimmung ein. Für den persönlichen Gebrauch kannst du die App auf **Testing** lassen und dein Google-Konto als Testnutzer hinzufügen.
+3. Erstelle unter **APIs & Services → Credentials** eine **OAuth Client ID** vom Typ **Web application**.
+4. Füge bei **Authorized JavaScript origins** den Ursprung der App ein. Beispiele: `https://DEIN-NAME.github.io` (ohne Repository-Pfad) oder `http://localhost:8000`. Eine Redirect-URI wird für diesen Browser-Token-Ablauf nicht benötigt.
+5. Kopiere die Client-ID, die auf `.apps.googleusercontent.com` endet, und trage sie in CarstenFit oben rechts ein. Wähle **Google Drive verbinden** und erteile die angefragte Berechtigung.
 
-Danach kannst du mit **Jetzt synchronisieren** die Daten auf OneDrive sichern. Auf einem zweiten Gerät dieselbe Anwendungs-ID eintragen, dich mit demselben Microsoft-Konto anmelden und synchronisieren. Bei vorhandener Sicherung kannst du die Verläufe zusammenführen oder eine Seite ersetzen. Zusammenführen bewahrt neue Trainingseinheiten und Übungen; um Löschungen zu übertragen, wähle die Seite, auf der die Löschung bereits durchgeführt wurde.
-
-Die App erhält keinen Client-Secret und speichert keine Microsoft-Passwörter. MSAL verwaltet die Anmeldungstokens lokal im Browser. Die OneDrive-Verbindung braucht Internetzugang; die restliche App bleibt offline nutzbar.
+Die OAuth-Client-ID ist öffentlich für Browser-Apps bestimmt; einen Client-Secret braucht CarstenFit nicht. Google gibt ein kurzlebiges Zugriffstoken aus, das nur im Arbeitsspeicher der geöffneten App liegt. Wenn es abläuft oder du die App neu öffnest, starte die Verbindung erneut über einen Knopfdruck. Zum Abgleich auf weiteren Geräten dieselbe Client-ID und dasselbe Google-Konto verwenden. Bei vorhandener Sicherung kannst du Trainingsdaten zusammenführen oder eine Version ersetzen. Zusammenführen bewahrt Einträge; für Löschungen wähle die Version, in der sie enthalten sind.
