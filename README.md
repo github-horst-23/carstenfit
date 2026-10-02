@@ -24,9 +24,8 @@ Die App speichert weiterhin eine lokale Offline-Kopie. Optional kann sie den Dat
 
 1. Erstelle ein Supabase-Projekt und öffne dort **SQL Editor**. Führe den Inhalt von [`supabase-setup.sql`](supabase-setup.sql) einmal aus. Damit werden Tabelle, Grants und Row Level Security erstellt. Jede Datenbankzeile ist auf den angemeldeten Benutzer begrenzt.
 2. Stelle die App über HTTPS bereit, zum Beispiel über GitHub Pages. In Supabase unter **Authentication → URL Configuration** trägst du die URL deiner App als Site URL ein. Aktiviere E-Mail/Passwort-Anmeldung.
-3. Kopiere die **Project URL** und den **Publishable Key** aus dem Supabase-Dialog **Connect**.
-4. Öffne CarstenFit und tippe oben auf das Wolken-Symbol. Trage URL und Publishable Key ein und erstelle dein persönliches Konto. Falls E-Mail-Bestätigung aktiv ist, bestätige zuerst die E-Mail und melde dich dann an.
-5. Beim ersten Abgleich ohne vorhandenen Cloud-Datensatz lädt CarstenFit deine lokalen Daten hoch. Wenn bereits Cloud-Daten existieren, kannst du auswählen, ob du die Cloud-Version laden oder deine lokalen Daten hochladen möchtest.
+3. Öffne CarstenFit und tippe oben auf das Wolken-Symbol. Die Project URL und der Publishable Key für das vorbereitete Projekt sind bereits eingetragen. Erstelle dein persönliches Konto. Falls E-Mail-Bestätigung aktiv ist, bestätige zuerst die E-Mail und melde dich dann an.
+4. Beim ersten Abgleich ohne vorhandenen Cloud-Datensatz lädt CarstenFit deine lokalen Daten hoch. Wenn bereits Cloud-Daten existieren, kannst du auswählen, ob du die Cloud-Version laden oder deine lokalen Daten hochladen möchtest. Bei einem anderen Supabase-Projekt kannst du URL und Publishable Key im Wolken-Dialog ersetzen.
 
 Änderungen werden lokal gespeichert und bei aktiver Verbindung automatisch in die Cloud geschrieben. Versionsprüfungen verhindern, dass ein älterer Browserstand unbemerkt neuere Cloud-Daten überschreibt. Bei einem Konflikt fragt CarstenFit nach der zu verwendenden Version. Bei Offline-Änderungen erfolgt der Abgleich nach Wiederherstellung der Verbindung oder über **Jetzt synchronisieren**.
 

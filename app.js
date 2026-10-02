@@ -1,5 +1,6 @@
 const KEY='repday-data-v1';
 const CLOUD_CONFIG_KEY='carstenfit-supabase-config-v1',CLOUD_OWNER_KEY='carstenfit-cloud-owner-v1',CLOUD_VERSION_KEY='carstenfit-cloud-version-v1',CLOUD_DIRTY_KEY='carstenfit-cloud-dirty-v1';
+const CLOUD_DEFAULT_CONFIG={url:'https://tevmjyetjnnvgwvitvrr.supabase.co',key:'sb_publishable_uCM1uo3-Cab5tbRWKpbD1A_5tk1EeIv'};
 const weekdays=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
 const seed={catalog:[
  {name:'Bankdrücken',group:'Brust',sets:4,reps:'6–8',rest:120},{name:'Schrägbankdrücken Kurzhantel',group:'Brust',sets:3,reps:'8–10',rest:90},{name:'Brustpresse',group:'Brust',sets:3,reps:'8–12',rest:90},{name:'Kabel-Flys',group:'Brust',sets:3,reps:'12–15',rest:60},
@@ -17,7 +18,7 @@ function load(){try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');retu
 function save(){localStorage.setItem(KEY,JSON.stringify(data));if(cloudUser||localStorage.getItem(CLOUD_OWNER_KEY)){localStorage.setItem(CLOUD_DIRTY_KEY,'1');if(cloudUser){clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(cloudSaveNow,900)}}}
 const $=(sel,root=document)=>root.querySelector(sel), $$=(sel,root=document)=>[...root.querySelectorAll(sel)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function storedCloudConfig(){try{return JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY)||'{}')}catch{return {}}}
+function storedCloudConfig(){try{return {...CLOUD_DEFAULT_CONFIG,...JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY)||'{}')}}catch{return {...CLOUD_DEFAULT_CONFIG}}}
 function createCloudClient(config){if(!window.supabase?.createClient)throw Error('Die Supabase-Bibliothek konnte nicht geladen werden. Prüfe die Internetverbindung.');if(!/^https?:\/\//i.test(config.url)||!config.key)throw Error('Bitte trage Projekt-URL und Publishable Key ein.');cloudClient=window.supabase.createClient(config.url.replace(/\/$/,''),config.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return cloudClient}
 function updateCloudButton(){const button=$('#cloudBtn');if(!button)return;button.textContent=cloudUser?'☁✓':'☁';button.classList.toggle('cloud-connected',Boolean(cloudUser));button.title=cloudUser?`Cloud verbunden: ${cloudUser.email||'angemeldet'}`:'Cloud-Synchronisierung einrichten';button.setAttribute('aria-label',button.title)}
 async function startCloud(){const config=storedCloudConfig();if(!config.url||!config.key||!window.supabase?.createClient){updateCloudButton();return}try{createCloudClient(config);const {data:result,error}=await cloudClient.auth.getSession();if(error)throw error;cloudUser=result.session?.user||null;if(cloudUser){cloudVersion=Number(localStorage.getItem(CLOUD_VERSION_KEY))||null;await cloudInitialSync()}updateCloudButton()}catch(error){console.warn('Cloud-Verbindung konnte nicht gestartet werden:',error.message);updateCloudButton()}}
