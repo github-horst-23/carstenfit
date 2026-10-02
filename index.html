@@ -3,20 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#101310" />
+  <meta name="theme-color" content="#1769e0" />
   <meta name="description" content="Dein persönlicher Trainingsplan, Verlauf und Fortschritt." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
-  <script src="https://accounts.google.com/gsi/client"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <title>CarstenFit – dein Training</title>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="#home" aria-label="CarstenFit Startseite"><span class="brand-mark">C</span><span>carstenfit<span class="brand-dot">.</span></span></a>
+      <button class="button secondary small export-btn" id="exportMenuBtn" type="button" aria-label="Daten exportieren oder importieren" title="Daten exportieren oder importieren"><span aria-hidden="true">⇅</span> Export</button>
+      <button class="icon-button cloud-btn" id="cloudBtn" type="button" aria-label="Cloud-Synchronisierung einrichten" title="Cloud-Synchronisierung einrichten">☁</button>
       <button class="icon-button" id="installBtn" hidden aria-label="App installieren" title="App installieren">↓</button>
-      <button class="avatar" id="settingsBtn" aria-label="Google Drive verbinden" title="Google Drive verbinden">C</button>
     </header>
 
     <main id="app" class="page"></main>

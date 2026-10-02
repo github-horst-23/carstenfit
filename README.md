@@ -18,18 +18,20 @@ Es gibt keine Build- oder Paketinstallation. Der Service Worker legt die App-Dat
 - Spotify-Player für einen gespeicherten Playlist-, Album- oder Titel-Link
 - JSON-Backup exportieren und wieder importieren
 
-Die Daten werden in `localStorage` gespeichert. Ein Backup auf ein anderes Gerät muss manuell exportiert und importiert werden. Spotify-Inhalte laufen im offiziellen Spotify-Embed-Player; dessen Wiedergabe braucht eine Internetverbindung.
+Die App speichert weiterhin eine lokale Offline-Kopie. Optional kann sie den Datensatz mit Supabase synchronisieren, damit CarstenFit in mehreren Browsern denselben Trainingsstand lädt. Spotify-Inhalte laufen im offiziellen Spotify-Embed-Player; dessen Wiedergabe braucht eine Internetverbindung.
 
-## Google Drive verbinden
+## Cloud-Synchronisierung mit Supabase einrichten
 
-CarstenFit speichert `CarstenFit-sync.json` im privaten `appDataFolder` von Google Drive. Dieser Ordner wird von Google für App-Daten verwaltet und ist nicht Teil deiner normalen Drive-Dateiliste. Die App fordert nur den OAuth-Bereich `drive.appdata` an. [Google-Dokumentation zum App-Datenordner](https://developers.google.com/workspace/drive/api/guides/appdata)
+1. Erstelle ein Supabase-Projekt und öffne dort **SQL Editor**. Führe den Inhalt von [`supabase-setup.sql`](supabase-setup.sql) einmal aus. Damit werden Tabelle, Grants und Row Level Security erstellt. Jede Datenbankzeile ist auf den angemeldeten Benutzer begrenzt.
+2. Stelle die App über HTTPS bereit, zum Beispiel über GitHub Pages. In Supabase unter **Authentication → URL Configuration** trägst du die URL deiner App als Site URL ein. Aktiviere E-Mail/Passwort-Anmeldung.
+3. Kopiere die **Project URL** und den **Publishable Key** aus dem Supabase-Dialog **Connect**.
+4. Öffne CarstenFit und tippe oben auf das Wolken-Symbol. Trage URL und Publishable Key ein und erstelle dein persönliches Konto. Falls E-Mail-Bestätigung aktiv ist, bestätige zuerst die E-Mail und melde dich dann an.
+5. Beim ersten Abgleich ohne vorhandenen Cloud-Datensatz lädt CarstenFit deine lokalen Daten hoch. Wenn bereits Cloud-Daten existieren, kannst du auswählen, ob du die Cloud-Version laden oder deine lokalen Daten hochladen möchtest.
 
-### Einmalige Google-Einrichtung
+Änderungen werden lokal gespeichert und bei aktiver Verbindung automatisch in die Cloud geschrieben. Versionsprüfungen verhindern, dass ein älterer Browserstand unbemerkt neuere Cloud-Daten überschreibt. Bei einem Konflikt fragt CarstenFit nach der zu verwendenden Version. Bei Offline-Änderungen erfolgt der Abgleich nach Wiederherstellung der Verbindung oder über **Jetzt synchronisieren**.
 
-1. Öffne die [Google Cloud Console](https://console.cloud.google.com/), erstelle ein Projekt und aktiviere darin die **Google Drive API**.
-2. Richte die OAuth-Zustimmung ein. Für den persönlichen Gebrauch kannst du die App auf **Testing** lassen und dein Google-Konto als Testnutzer hinzufügen.
-3. Erstelle unter **APIs & Services → Credentials** eine **OAuth Client ID** vom Typ **Web application**.
-4. Füge bei **Authorized JavaScript origins** den Ursprung der App ein. Beispiele: `https://DEIN-NAME.github.io` (ohne Repository-Pfad) oder `http://localhost:8000`. Eine Redirect-URI wird für diesen Browser-Token-Ablauf nicht benötigt.
-5. Kopiere die Client-ID, die auf `.apps.googleusercontent.com` endet, und trage sie in CarstenFit oben rechts ein. Wähle **Google Drive verbinden** und erteile die angefragte Berechtigung.
+Im Browser eingebaut werden nur Project URL und Publishable Key. Verwende niemals den `service_role`- oder Secret-Key in der PWA. Die RLS-Regeln in der SQL-Datei sind erforderlich, damit Benutzer ausschließlich auf ihre eigene Zeile zugreifen.
 
-Die OAuth-Client-ID ist öffentlich für Browser-Apps bestimmt; einen Client-Secret braucht CarstenFit nicht. Google gibt ein kurzlebiges Zugriffstoken aus, das nur im Arbeitsspeicher der geöffneten App liegt. Wenn es abläuft oder du die App neu öffnest, starte die Verbindung erneut über einen Knopfdruck. Zum Abgleich auf weiteren Geräten dieselbe Client-ID und dasselbe Google-Konto verwenden. Bei vorhandener Sicherung kannst du Trainingsdaten zusammenführen oder eine Version ersetzen. Zusammenführen bewahrt Einträge; für Löschungen wähle die Version, in der sie enthalten sind.
+## Daten lokal sichern und übertragen
+
+Über **Export** in der Kopfzeile kannst du eine JSON-Sicherung aller CarstenFit-Daten herunterladen und auf diesem oder einem anderen Gerät importieren. Das bleibt auch mit aktivierter Cloud-Synchronisierung als manuelles Backup verfügbar.
